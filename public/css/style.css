@@ -1,0 +1,58 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  background-image: url(../image/golf-bg-1.jpg);
+  background-size: cover;
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+main .score-row {
+  padding-top: 5em;
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+#playerScore input {
+  background: transparent;
+  border: none;
+  color: #ffffff !important;
+  text-align: center;
+}
+
+.score-counter input {
+  color: #ffffff;
+}
+
+.table {
+  text-align: center;
+}
+
+.modal .modal-content {
+  background: RGBA(233, 196, 106, 0.7);
+  backdrop-filter: blur(5px);
+}
+.modal .modal-content .modal-header, .modal .modal-content .modal-body, .modal .modal-content .modal-footer {
+  border: none;
+}
+.modal .modal-content .modal-header h1 {
+  text-align: center;
+  font-weight: bold;
+}
+.modal .modal-content .modal-body .form-container .row {
+  margin: 15px auto;
+}
+.modal .modal-content .modal-body .form-container .row label {
+  color: #333333;
+}
+
+/*# sourceMappingURL=style.css.map */
