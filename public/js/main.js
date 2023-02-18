@@ -157,6 +157,7 @@ function markingScore() {
     if (/^[A-Za-z]*$/.test(key_press) == true) {
         event.preventDefault();
     } else {
+        var current_score = event.currentTarget.id;
         console.log(event.currentTarget.id);
     }
 
