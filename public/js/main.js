@@ -52,7 +52,7 @@ $("#newCard").on("submit", async() => {
         $(".score-row > div").append("<div class='row' id='"+ row_id +"'></div>");
 
         $(".score-row > div #" + row_id).append(
-                "<div class='col-sm-12 col-md-12 col-lg-12 col-insert-1'>"+
+                "<div class='col-12 col-insert-1'>"+
                     "<table class='table table-dark' id='"+table_id+"'>"+
                         "<tbody>"+
                             "<tr id='holes'>" +
@@ -73,7 +73,7 @@ $("#newCard").on("submit", async() => {
                         "</tbody>" +
                     "</table>"+
                 "</div>" +
-                "<div class='col-sm-12 col-md-12 col-lg-12 col-insert-2 d-none'>"+
+                "<div class='col-12 col-insert-2 d-none'>"+
                     "<table class='table table-dark' id='"+table_id+"'>"+
                         "<tbody>"+
                             "<tr id='holes'>" +
@@ -105,18 +105,12 @@ $("#newCard").on("submit", async() => {
 
             if (count <= 9) {
                 var insert_col = "col-insert-1";
-            }else if(count == 18) {
+            } else if (count === 10) {
                 $("."+ insert_col +" #"+table_id+" #holes").append("<td>Out</td>");
                 $("."+ insert_col +" #"+table_id+" #yardages").append("<td>"+ totals["yardage"] +"</td>");
                 $("."+ insert_col +" #"+table_id+" #pars").append("<td>"+ totals["par"] +"</td>");
                 $("."+ insert_col +" #"+table_id+" #handicaps").append("<td>"+ totals["handicap"] +"</td>");
-                $("." + insert_col + " #"+table_id+ " #playerScore").append("<td></td>");
-            } else {
-                $("."+ insert_col +" #"+table_id+" #holes").append("<td>Out</td>");
-                $("."+ insert_col +" #"+table_id+" #yardages").append("<td>"+ totals["yardage"] +"</td>");
-                $("."+ insert_col +" #"+table_id+" #pars").append("<td>"+ totals["par"] +"</td>");
-                $("."+ insert_col +" #"+table_id+" #handicaps").append("<td>"+ totals["handicap"] +"</td>");
-                $("." + insert_col + " #"+table_id+ " #playerScore").append("<td></td>");
+                $("." + insert_col + " #"+table_id+ " #playerScore").append("<td id='col_insert_1'></td>");
                 var insert_col = "col-insert-2";
             }
 
@@ -132,13 +126,19 @@ $("#newCard").on("submit", async() => {
             $("." + insert_col + " #"+table_id+ " #pars").append("<td>"+ level_data.par +"</td>");
             $("." + insert_col + " #"+table_id+ " #handicaps").append("<td>"+ level_data.hcp +"</td>");
 
-            var input_insert = (count == 1 || count == 10) ? "<td><input type='text' class='form-control score-counter' id='score_"+ count +"' onkeypress='markingScore()'></td>" : "<td><input type='text' class='form-control score-counter' id='score_"+ count +"' onkeypress='markingScore()' disabled></td>";
+            var input_insert = (count == 1 || count == 10) ? "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ count +"' onkeypress='markingScore()' onchange='calculateScore()'></td>" : "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ count +"' onkeypress='markingScore()' onchange='calculateScore()' disabled></td>";
 
             $("." + insert_col + " #"+table_id+ " #playerScore").append(input_insert);
             
             count++;
             
         }
+
+        $("."+ insert_col +" #"+table_id+" #holes").append("<td>Out</td>");
+        $("."+ insert_col +" #"+table_id+" #yardages").append("<td>"+ totals["yardage"] +"</td>");
+        $("."+ insert_col +" #"+table_id+" #pars").append("<td>"+ totals["par"] +"</td>");
+        $("."+ insert_col +" #"+table_id+" #handicaps").append("<td>"+ totals["handicap"] +"</td>");
+        $("." + insert_col + " #"+table_id+ " #playerScore").append("<td id='col_insert_2'></td>");
 
     });
 
@@ -152,15 +152,39 @@ $("#newCard").on("submit", async() => {
 });
 
 function markingScore() {
-    var key_press = event.key;
-
-    if (/^[A-Za-z]*$/.test(key_press) == true) {
+    let key_press = event.key;
+    // let current_score = event.currentTarget.id;
+    // let current_table = $(event.currentTarget).parents("table")[0];
+    // let score_data = current_score.split("_");
+    // let table_total = (score_data[2] <= 9) ? "#col_insert_1" : "#col_insert_2";
+    
+    if (/^[A-Za-z]*$/.test(key_press) == true || key_press == ' ') {
         event.preventDefault();
+    }
+}
+
+function calculateScore() {
+    let key_press = event.currentTarget.value;
+    let current_score = event.currentTarget.id;
+    let current_table = $(event.currentTarget).parents("table")[0];
+    let score_data = current_score.split("_");
+    let table_total = (score_data[2] <= 9) ? "#col_insert_1" : "#col_insert_2";
+
+    if (score_data[2] == 9) {
+        $("#" + score_data[0] + "-row").find(".col-insert-1").removeClass("col-12").addClass("col-6");
+        $("#" + score_data[0] + "-row").find(".col-insert-2").removeClass("col-12").addClass("col-6");
+        $("#" + score_data[0] + "-row").find(".col-insert-2").removeClass("d-none");
     } else {
-        var current_score = event.currentTarget.id;
-        console.log(event.currentTarget.id);
+        $(current_table).find("#"+ score_data[0] +"_score_" + (parseInt(score_data[2]) + 1)).prop("disabled", false);
     }
 
+    if ($("#" + score_data[0] + "-row").find(table_total).text() == '') {
+        $("#" + score_data[0] + "-row").find(table_total).text(parseInt(event.currentTarget.value));
+    } else {
+        var current_total = $("#" + score_data[0] + "-row").find(table_total).text();
+        $("#" + score_data[0] + "-row").find(table_total).text(parseInt(current_total) + parseInt(event.currentTarget.value));
+    }
+    $(event.currentTarget).prop("disabled", true);
 }
 
 
