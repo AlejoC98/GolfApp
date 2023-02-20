@@ -29,6 +29,9 @@
                         <div class="col-2">
                             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlayerModal">New Player</button>
                         </div>
+                        <!-- <div class="col-2">
+                            <button class="btn btn-warning text-white">Reset</button>
+                        </div> -->
                     </div>
                 </div>
             </div>
@@ -47,7 +50,7 @@
                                 <div class="row">
                                     <div class="col">
                                         <label for="player">Player Name:</label>
-                                        <input type="text" class="form-control" id="player" name="player" placeholder="Name"
+                                        <input type="text" class="form-control" id="player" name="player" placeholder="Name" onchange="checkUser()"
                                             required>
                                     </div>
                                 </div>
@@ -75,7 +78,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="newCard" class="btn btn-info text-white">Create</button>
+                        <button type="submit" form="newCard" class="btn btn-info text-white" id="createNewCard">Create</button>
                     </div>
                 </div>
             </div>

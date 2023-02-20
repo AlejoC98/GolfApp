@@ -68,5 +68,9 @@ input::-webkit-inner-spin-button {
                 }
             }
         }
+
+        .modal-footer {
+            justify-content: space-between;
+        }
     }
 }

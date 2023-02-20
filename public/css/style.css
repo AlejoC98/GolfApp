@@ -54,5 +54,8 @@ input::-webkit-inner-spin-button {
 .modal .modal-content .modal-body .form-container .row label {
   color: #333333;
 }
+.modal .modal-content .modal-footer {
+  justify-content: space-between;
+}
 
 /*# sourceMappingURL=style.css.map */

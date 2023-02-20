@@ -10,6 +10,8 @@ let totals = {
     "handicap": 0,
 };
 
+let users_playing = [];
+
 $("#courses").on("change", async() => {
     var course = $(event.target).find(":selected").val();
     var levels = [];
@@ -106,7 +108,7 @@ $("#newCard").on("submit", async() => {
             if (count <= 9) {
                 var insert_col = "col-insert-1";
             } else if (count === 10) {
-                $("."+ insert_col +" #"+table_id+" #holes").append("<td>Out</td>");
+                $("."+ insert_col +" #"+table_id+" #holes").append("<td>In</td>");
                 $("."+ insert_col +" #"+table_id+" #yardages").append("<td>"+ totals["yardage"] +"</td>");
                 $("."+ insert_col +" #"+table_id+" #pars").append("<td>"+ totals["par"] +"</td>");
                 $("."+ insert_col +" #"+table_id+" #handicaps").append("<td>"+ totals["handicap"] +"</td>");
@@ -171,8 +173,8 @@ function calculateScore() {
     let table_total = (score_data[2] <= 9) ? "#col_insert_1" : "#col_insert_2";
 
     if (score_data[2] == 9) {
-        $("#" + score_data[0] + "-row").find(".col-insert-1").removeClass("col-12").addClass("col-6");
-        $("#" + score_data[0] + "-row").find(".col-insert-2").removeClass("col-12").addClass("col-6");
+        // $("#" + score_data[0] + "-row").find(".col-insert-1").removeClass("col-12").addClass("col-6");
+        // $("#" + score_data[0] + "-row").find(".col-insert-2").removeClass("col-12").addClass("col-6");
         $("#" + score_data[0] + "-row").find(".col-insert-2").removeClass("d-none");
     } else {
         $(current_table).find("#"+ score_data[0] +"_score_" + (parseInt(score_data[2]) + 1)).prop("disabled", false);
@@ -187,6 +189,14 @@ function calculateScore() {
     $(event.currentTarget).prop("disabled", true);
 }
 
+function checkUser() {
+    var username = event.currentTarget.value;
+    if (users_playing.includes(username)) {
+        $("#createNewCard").prop("disabled", true);
+    } else {
+        $("#createNewCard").prop("disabled", false);
+    }
+}
 
 $(document).ready(() => {
     $("#newPlayerModal").modal("show");
