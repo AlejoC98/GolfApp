@@ -22,12 +22,12 @@
         <div class="container-fluid">
             <div class="row score-row d-none">
                 <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-10">
+                    <div class="row row-header">
+                        <div class="col-md-10 col-sm-12 col-sx-12">
                             <h1>Let's play some golf!</h1>
                         </div>
-                        <div class="col-2">
-                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlayerModal">New Player</button>
+                        <div class="col-md-2 col-sm-12 col-sx-12">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newPlayerModal" onclick="newPlayer()">New Player</button>
                         </div>
                         <!-- <div class="col-2">
                             <button class="btn btn-warning text-white">Reset</button>
@@ -54,9 +54,9 @@
                                             required>
                                     </div>
                                 </div>
-                                <div class="row">
+                                <div class="row" id="courses_row">
                                     <div class="col">
-                                        <label for="courses">Class:</label>
+                                        <label for="courses">Courses:</label>
                                         <select name="courses" id="courses" class="form-select" required>
                                             <option value="">Select Course</option>
                                             <option value="11819">Thanksgiving Point Golf Course</option>
@@ -83,7 +83,7 @@
                 </div>
             </div>
         </div>
+        <div class="container-alert"></div>
     </main>
 </body>
-
 </html>

@@ -7,7 +7,9 @@ body {
 main {
     background-image: url(../image/golf-bg-1.jpg);
     background-size: cover;
-    display: flex;
+    // display: flex;
+    position: relative;
+    top: 0;
     width: 100%;
     min-height: 100vh;
 
@@ -23,12 +25,16 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-#playerScore {
+.playerScore {
+
     input {
+        text-align: center;
+    }
+
+    input:is(:disabled) {
         background: transparent;
         border: none;
         color: #ffffff !important;
-        text-align: center;
     }
 }
 
@@ -40,6 +46,39 @@ input::-webkit-inner-spin-button {
 
 .table {
     text-align: center;
+}
+
+.container-alert {
+    display: none;
+    // min-height: 100vh;
+    width: 20%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    z-index: 100000;
+}
+
+.row {
+    overflow-x: scroll !important;
+}
+
+.row-header {
+    margin-bottom: 40px;
+    .col-md-12 {
+        margin-bottom: 20px;
+    }
+}
+
+.alert {
+    // width: 30%;
+    float: right;
+    z-index: 10000;
+    // position: absolute !important;
+    top: 0;
+    right: 0;
+    margin: 20px;
+    display: flex;
+    flex-direction: column;
 }
 
 .modal {

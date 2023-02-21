@@ -12,6 +12,8 @@ let totals = {
 
 let users_playing = [];
 
+let new_user_status = undefined;
+
 $("#courses").on("change", async() => {
     var course = $(event.target).find(":selected").val();
     var levels = [];
@@ -40,118 +42,152 @@ $("#courses").on("change", async() => {
 
 $("#newCard").on("submit", async() => {
     event.preventDefault();
-    var course_selected = $("#newCard #courses").find(":selected").val();
-    var username = $("#newCard #player").val();
-    var level = $("#newCard #level").find(":selected").val();
+    var course_selected = $("#" + event.currentTarget.id + " #courses").find(":selected").val();
+    var username = $("#" + event.currentTarget.id + " #player").val();
+    var level = $("#" + event.currentTarget.id + " #level").find(":selected").val();
     var row_id = username + "-row";
-    var table_id = username + "ScoreCard";
 
-    await fetch(golfCourses[course_selected]).then((response) => response.json()).then((data) => {
-        $("#newPlayerModal").modal("hide");
-        $(".score-row").removeClass("d-none");
-        data = data.data;
+    switch (event.currentTarget.id) {
+        case "addNewUser":
 
-        $(".score-row > div").append("<div class='row' id='"+ row_id +"'></div>");
+            if (new_user_status == true) {
+                $(".col-insert-1 table tbody, .col-insert-2 table tbody").append("<tr id='" + username + "Score' class='playerScore'><td id='username'>"+ username +"</td></tr>");
+                
+                for (let index = 1; index < 19; index++) {
 
-        $(".score-row > div #" + row_id).append(
-                "<div class='col-12 col-insert-1'>"+
-                    "<table class='table table-dark' id='"+table_id+"'>"+
-                        "<tbody>"+
-                            "<tr id='holes'>" +
-                                "<td>Hole</td>" +
-                            "</tr>" +
-                            "<tr id='yardages'>" +
-                                "<td>Yardage</td>" +
-                            "</tr>" +
-                            "<tr id='pars'>" +
-                                "<td>Par</td>" +
-                            "</tr>" +
-                            "<tr id='handicaps'>" +
-                                "<td>Handicap</td>" +
-                            "</tr>" +
-                            "<tr id='playerScore'>" +
-                                "<td id='username'></td>" +
-                            "</tr>" +
-                        "</tbody>" +
-                    "</table>"+
-                "</div>" +
-                "<div class='col-12 col-insert-2 d-none'>"+
-                    "<table class='table table-dark' id='"+table_id+"'>"+
-                        "<tbody>"+
-                            "<tr id='holes'>" +
-                                "<td>Hole</td>" +
-                            "</tr>" +
-                            "<tr id='yardages'>" +
-                                "<td>Yardage</td>" +
-                            "</tr>" +
-                            "<tr id='pars'>" +
-                                "<td>Par</td>" +
-                            "</tr>" +
-                            "<tr id='handicaps'>" +
-                                "<td>Handicap</td>" +
-                            "</tr>" +
-                            "<tr id='playerScore'>" +
-                                "<td id='username'></td>" +
-                            "</tr>" +
-                        "</tbody>" +
-                    "</table>"+
-                "</div>"
-        );
+                    var insert_row = (index <= 9) ? ".col-insert-1" : ".col-insert-2";
 
-        $("#"+table_id+" #username").text(username);
+                    console.log("Sociooo", index);
+                    var input_insert = (index == 1 || index == 10) ? "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ index +"' onkeypress='markingScore()' onchange='calculateScore()'></td>" : "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ index +"' onkeypress='markingScore()' onchange='calculateScore()' disabled></td>";
+            
+                    $(insert_row + " table #" + username + "Score").append(input_insert);
 
-        var count = 1;
-
-        for (hole of data.holes) {
-            // var insert_col = (count <= 9) ? "col-insert-1" : "col-insert-2";
-
-            if (count <= 9) {
-                var insert_col = "col-insert-1";
-            } else if (count === 10) {
-                $("."+ insert_col +" #"+table_id+" #holes").append("<td>In</td>");
-                $("."+ insert_col +" #"+table_id+" #yardages").append("<td>"+ totals["yardage"] +"</td>");
-                $("."+ insert_col +" #"+table_id+" #pars").append("<td>"+ totals["par"] +"</td>");
-                $("."+ insert_col +" #"+table_id+" #handicaps").append("<td>"+ totals["handicap"] +"</td>");
-                $("." + insert_col + " #"+table_id+ " #playerScore").append("<td id='col_insert_1'></td>");
-                var insert_col = "col-insert-2";
+                    switch (index) {
+                        case 9:
+                            $(insert_row + " table #" + username + "Score").append("<td id='" + username + "_total_1'></td>");
+                            break;
+                        case 19:
+                            $(insert_row + " table #" + username + "Score").append("<td id='" + username + "_total_2'></td>");
+                            break;
+                    }
+                }
             }
 
-            $("." + insert_col + " #"+table_id+ " #holes").append("<td>"+ hole.hole +"</td>");
-            
-            var level_data = hole.teeBoxes.find((type) => type.teeType == level);
-            
-            totals["yardage"] += level_data.yards;
-            totals["par"] += level_data.par;
-            totals["handicap"] += level_data.hcp;
-            
-            $("." + insert_col + " #"+table_id+ " #yardages").append("<td>"+ level_data.yards +"</td>");
-            $("." + insert_col + " #"+table_id+ " #pars").append("<td>"+ level_data.par +"</td>");
-            $("." + insert_col + " #"+table_id+ " #handicaps").append("<td>"+ level_data.hcp +"</td>");
+            break;
+    
+        default:
+            await fetch(golfCourses[course_selected]).then((response) => response.json()).then((data) => {
+                $("#newPlayerModal").modal("hide");
+                $(".score-row").removeClass("d-none");
+                data = data.data;
+        
+                $(".score-row > div").append("<div class='row' id='"+ row_id +"'></div>");
+        
+                $(".score-row > div #" + row_id).append(
+                        "<div class='col-12 col-insert-1'>"+
+                            "<table class='table table-dark'>"+
+                                "<tbody>"+
+                                    "<tr id='holes'>" +
+                                        "<td>Hole</td>" +
+                                    "</tr>" +
+                                    "<tr id='yardages'>" +
+                                        "<td>Yardage</td>" +
+                                    "</tr>" +
+                                    "<tr id='pars'>" +
+                                        "<td>Par</td>" +
+                                    "</tr>" +
+                                    "<tr id='handicaps'>" +
+                                        "<td>Handicap</td>" +
+                                    "</tr>" +
+                                    "<tr id='"+ username +"Score' class='playerScore'>" +
+                                        "<td id='username'>"+ username +"</td>" +
+                                    "</tr>" +
+                                "</tbody>" +
+                            "</table>"+
+                        "</div>" +
+                        "<div class='col-12 col-insert-2 '>"+
+                            "<table class='table table-dark'>"+
+                                "<tbody>"+
+                                    "<tr id='holes'>" +
+                                        "<td>Hole</td>" +
+                                    "</tr>" +
+                                    "<tr id='yardages'>" +
+                                        "<td>Yardage</td>" +
+                                    "</tr>" +
+                                    "<tr id='pars'>" +
+                                        "<td>Par</td>" +
+                                    "</tr>" +
+                                    "<tr id='handicaps'>" +
+                                        "<td>Handicap</td>" +
+                                    "</tr>" +
+                                    "<tr id='"+ username +"Score' class='playerScore'>" +
+                                        "<td id='username'>"+ username +"</td>" +
+                                    "</tr>" +
+                                "</tbody>" +
+                            "</table>"+
+                        "</div>"
+                );
 
-            var input_insert = (count == 1 || count == 10) ? "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ count +"' onkeypress='markingScore()' onchange='calculateScore()'></td>" : "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ count +"' onkeypress='markingScore()' onchange='calculateScore()' disabled></td>";
-
-            $("." + insert_col + " #"+table_id+ " #playerScore").append(input_insert);
-            
-            count++;
-            
-        }
-
-        $("."+ insert_col +" #"+table_id+" #holes").append("<td>Out</td>");
-        $("."+ insert_col +" #"+table_id+" #yardages").append("<td>"+ totals["yardage"] +"</td>");
-        $("."+ insert_col +" #"+table_id+" #pars").append("<td>"+ totals["par"] +"</td>");
-        $("."+ insert_col +" #"+table_id+" #handicaps").append("<td>"+ totals["handicap"] +"</td>");
-        $("." + insert_col + " #"+table_id+ " #playerScore").append("<td id='col_insert_2'></td>");
-
-    });
-
-    $("#courses").prop('selectedIndex', 0);
-    $("#player").val("");
-    $("#level").prop('selectedIndex', 0);
-
-    $("#level_row").addClass("d-none");
-    $("#level").empty().append('<option value="">Select Level</option>');
+                var count = 1;
+        
+                for (hole of data.holes) {
+        
+                    if (count <= 9) {
+                        var insert_col = "col-insert-1";
+                    } else if (count === 10) {
+                        $("."+ insert_col +" table #holes").append("<td>In</td>");
+                        $("."+ insert_col +" table #yardages").append("<td>"+ totals["yardage"] +"</td>");
+                        $("."+ insert_col +" table #pars").append("<td>"+ totals["par"] +"</td>");
+                        $("."+ insert_col +" table #handicaps").append("<td>"+ totals["handicap"] +"</td>");
+                        $("." + insert_col + " table #"+ username +"Score").append("<td id='" + username + "_total_1'></td>");
+                        var insert_col = "col-insert-2";
+                    }
+        
+                    $("." + insert_col + " table #holes").append("<td>"+ hole.hole +"</td>");
+                    
+                    var level_data = hole.teeBoxes.find((type) => type.teeType == level);
+                    
+                    totals["yardage"] += level_data.yards;
+                    totals["par"] += level_data.par;
+                    totals["handicap"] += level_data.hcp;
+                    
+                    $("." + insert_col + " table #yardages").append("<td>"+ level_data.yards +"</td>");
+                    $("." + insert_col + " table #pars").append("<td>"+ level_data.par +"</td>");
+                    $("." + insert_col + " table #handicaps").append("<td>"+ level_data.hcp +"</td>");
+        
+                    var input_insert = (count == 1 || count == 10) ? "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ count +"' onkeypress='markingScore()' onchange='calculateScore()'></td>" : "<td><input type='text' class='form-control score-counter' id='"+ username +"_score_"+ count +"' onkeypress='markingScore()' onchange='calculateScore()' disabled></td>";
+        
+                    $("." + insert_col + " table #"+ username +"Score").append(input_insert);
+                    
+                    count++;
+                    
+                }
+        
+                $("."+ insert_col +" table #holes").append("<td>Out</td>");
+                $("."+ insert_col +" table #yardages").append("<td>"+ totals["yardage"] +"</td>");
+                $("."+ insert_col +" table #pars").append("<td>"+ totals["par"] +"</td>");
+                $("."+ insert_col +" table #handicaps").append("<td>"+ totals["handicap"] +"</td>");
+                $("." + insert_col + " table #"+ username +"Score").append("<td id='" + username + "_total_2'></td>");
+        
+            });
+        
+            $("#courses").prop('selectedIndex', 0);
+            $("#player").val("");
+            $("#level").prop('selectedIndex', 0);
+        
+            $("#level_row").addClass("d-none");
+            $("#level").empty().append('<option value="">Select Level</option>');
+            break;
+    }
 
 });
+
+function newPlayer() {
+    $("#courses_row").remove();
+    $("#level_row").remove();
+
+    $("#newCard").attr("id", "addNewUser");
+}
 
 function markingScore() {
     let key_press = event.key;
@@ -166,36 +202,60 @@ function markingScore() {
 }
 
 function calculateScore() {
-    let key_press = event.currentTarget.value;
+    // let key_press = event.currentTarget.value;
     let current_score = event.currentTarget.id;
     let current_table = $(event.currentTarget).parents("table")[0];
     let score_data = current_score.split("_");
-    let table_total = (score_data[2] <= 9) ? "#col_insert_1" : "#col_insert_2";
+    let table_total = (score_data[2] <= 9) ? "#"+ score_data[0] +"_total_1" : "#"+ score_data[0] +"_total_2";
+
+    if ($("table").find(table_total).text() == '') {
+        $("table").find(table_total).text(parseInt(event.currentTarget.value));
+    } else {
+        var current_total = $("table").find(table_total).text();
+        $("table").find(table_total).text(parseInt(current_total) + parseInt(event.currentTarget.value));
+    }
 
     if (score_data[2] == 9) {
-        // $("#" + score_data[0] + "-row").find(".col-insert-1").removeClass("col-12").addClass("col-6");
-        // $("#" + score_data[0] + "-row").find(".col-insert-2").removeClass("col-12").addClass("col-6");
-        $("#" + score_data[0] + "-row").find(".col-insert-2").removeClass("d-none");
+        $("table").find(".col-insert-2").removeClass("d-none");
+        $("#col_insert_2").text($("table").find(table_total).text());
+    } else if (score_data[2] == 18) {
+        alertMesssage('', `${score_data[0]} you are (L)PGA Tour material!`, 'success');
     } else {
         $(current_table).find("#"+ score_data[0] +"_score_" + (parseInt(score_data[2]) + 1)).prop("disabled", false);
     }
 
-    if ($("#" + score_data[0] + "-row").find(table_total).text() == '') {
-        $("#" + score_data[0] + "-row").find(table_total).text(parseInt(event.currentTarget.value));
-    } else {
-        var current_total = $("#" + score_data[0] + "-row").find(table_total).text();
-        $("#" + score_data[0] + "-row").find(table_total).text(parseInt(current_total) + parseInt(event.currentTarget.value));
-    }
     $(event.currentTarget).prop("disabled", true);
 }
 
-function checkUser() {
-    var username = event.currentTarget.value;
+function checkUser(username = event.currentTarget.value) {
+    // var username = event.currentTarget.value;
     if (users_playing.includes(username)) {
         $("#createNewCard").prop("disabled", true);
-    } else {
+        alertMesssage('User already exist!', 'Please try a different one', 'warning');
+        new_user_status = false;
+    } else if (username != undefined){
         $("#createNewCard").prop("disabled", false);
+        users_playing.push(username);
+        new_user_status = true;
     }
+}
+
+function alertMesssage(strong, ms, type) {
+    var alert_ele =  '<div class="alert alert-'+ type +' alert-dismissible fade show animate__animated animate__slideInRight" role="alert">' +
+        '<strong>'+ strong +'</strong> ' + ms +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+    '</div>';
+
+    $(".container-alert").css("display", "block");
+    $(".container-alert").prepend(alert_ele);
+    
+    setTimeout(() => {
+        $(".container-alert").css("display", "none");
+        $(".container-alert").remove(alert_ele);
+    }, 5000);
+
+    // $("main").prepend(alert_ele);
+    // $("main").append(alert_ele);
 }
 
 $(document).ready(() => {
