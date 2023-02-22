@@ -28,6 +28,8 @@ $("#courses").on("change", async() => {
                     levels.push(type.teeType);
             });
         }
+    }).catch((err) => {
+        alertMesssage('', err, 'danger');
     });
 
     if (levels.length > 0) {
