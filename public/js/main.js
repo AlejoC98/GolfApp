@@ -21,7 +21,13 @@ $("#courses").on("change", async() => {
     $("#level_row").addClass("d-none");
     $("#level").empty().append('<option value="">Select Level</option>');
 
-    await fetch(golfCourses[course]).then((result) => result.json()).then((res) => {
+    await fetch(golfCourses[course],
+        {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            }
+        }).then((result) => result.json()).then((res) => {
         for (hole of res.data.holes) {
             hole.teeBoxes.find((type) => {
                 if (!levels.includes(type.teeType) && type.teeType != "auto change location")
@@ -80,7 +86,13 @@ $("#newCard").on("submit", async() => {
             break;
     
         default:
-            await fetch(golfCourses[course_selected]).then((response) => response.json()).then((data) => {
+            await fetch(golfCourses[course_selected],
+                {
+                    method: "GET",
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    }
+                }).then((response) => response.json()).then((data) => {
                 $("#newPlayerModal").modal("hide");
                 $(".score-row").removeClass("d-none");
                 data = data.data;
