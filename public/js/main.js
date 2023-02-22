@@ -21,13 +21,7 @@ $("#courses").on("change", async() => {
     $("#level_row").addClass("d-none");
     $("#level").empty().append('<option value="">Select Level</option>');
 
-    await fetch(golfCourses[course],
-        {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            }
-        }).then((result) => result.json()).then((res) => {
+    await fetch(golfCourses[course]).then((result) => result.json()).then((res) => {
         for (hole of res.data.holes) {
             hole.teeBoxes.find((type) => {
                 if (!levels.includes(type.teeType) && type.teeType != "auto change location")
@@ -86,13 +80,7 @@ $("#newCard").on("submit", async() => {
             break;
     
         default:
-            await fetch(golfCourses[course_selected],
-                {
-                    method: "GET",
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
-                    }
-                }).then((response) => response.json()).then((data) => {
+            await fetch(golfCourses[course_selected]).then((response) => response.json()).then((data) => {
                 $("#newPlayerModal").modal("hide");
                 $(".score-row").removeClass("d-none");
                 data = data.data;
@@ -202,10 +190,23 @@ $("#newCard").on("submit", async() => {
 });
 
 function newPlayer() {
-    $("#courses_row").remove();
-    $("#level_row").remove();
+    $("#courses_row").addClass("d-none");
+    $("#courses_row").find("select").prop('required', false);
+    $("#level_row").addClass("d-none");
+    $("#level_row").find("select").prop('required', false);
 
     $("#newCard").attr("id", "addNewUser");
+}
+
+function newGame() {
+    $("#courses_row").removeClass("d-none");
+    $("#courses_row").find("select").prop('required', true);
+    // $("#level_row").removeClass("d-none");
+    $("#level_row").find("select").prop('required', true);
+
+    $(".score-row > div .row:not(.row-header)").remove();
+    $(".score-row").addClass("d-none");
+
 }
 
 function markingScore() {
@@ -215,7 +216,7 @@ function markingScore() {
     // let score_data = current_score.split("_");
     // let table_total = (score_data[2] <= 9) ? "#col_insert_1" : "#col_insert_2";
     
-    if (/^[A-Za-z]*$/.test(key_press) == true || key_press == ' ') {
+    if (/^[A-Za-z]*$/.test(key_press) == true || key_press == ' ' || /[^\w\s]/.test(key_press)) {
         event.preventDefault();
     }
 }
@@ -235,7 +236,7 @@ function calculateScore() {
     }
 
     if (score_data[2] == 9) {
-        $("table").find(".col-insert-2").removeClass("d-none");
+        $(".col-insert-2").removeClass("d-none");
         $("#" + score_data[0] + "_total_2").text($("table").find(table_total).text());
     } else if (score_data[2] == 18) {
         alertMesssage('', `${score_data[0]} you are (L)PGA Tour material!`, 'success');
@@ -243,8 +244,8 @@ function calculateScore() {
         $(current_table).find("#"+ score_data[0] +"_score_" + (parseInt(score_data[2]) + 1)).prop("disabled", false);
     }
 
-    // $(event.currentTarget).prop("disabled", true);
-    $(event.currentTarget).parents("td").html(event.currentTarget.value);
+    $(event.currentTarget).prop("disabled", true);
+    // $(event.currentTarget).parents("td").html(event.currentTarget.value);
 }
 
 function checkUser(username = event.currentTarget.value) {
@@ -270,12 +271,10 @@ function alertMesssage(strong, ms, type) {
     $(".container-alert").prepend(alert_ele);
     
     setTimeout(() => {
-        $(".container-alert").css("display", "none");
         $(".container-alert").remove(alert_ele);
+        $(".container-alert").css("display", "none");
     }, 5000);
 
-    // $("main").prepend(alert_ele);
-    // $("main").append(alert_ele);
 }
 
 $(document).ready(() => {
