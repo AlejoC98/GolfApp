@@ -23,8 +23,12 @@ input::-webkit-inner-spin-button {
   margin: 0;
 }
 
-.playerScore input {
+.playerScore input, .playerScore input:is(:focus) {
   text-align: center;
+  background: transparent;
+  border: none;
+  color: #ffffff !important;
+  padding: 0 !important;
 }
 .playerScore input:is(:disabled) {
   background: transparent;

@@ -52,6 +52,8 @@ $("#newCard").on("submit", async() => {
 
             if (new_user_status == true) {
                 $(".col-insert-1 table tbody, .col-insert-2 table tbody").append("<tr id='" + username + "Score' class='playerScore'><td id='username'>"+ username +"</td></tr>");
+
+                $("#newPlayerModal").modal("hide");
                 
                 for (let index = 1; index < 19; index++) {
 
@@ -66,7 +68,7 @@ $("#newCard").on("submit", async() => {
                         case 9:
                             $(insert_row + " table #" + username + "Score").append("<td id='" + username + "_total_1'></td>");
                             break;
-                        case 19:
+                        case 18:
                             $(insert_row + " table #" + username + "Score").append("<td id='" + username + "_total_2'></td>");
                             break;
                     }
@@ -105,7 +107,7 @@ $("#newCard").on("submit", async() => {
                                 "</tbody>" +
                             "</table>"+
                         "</div>" +
-                        "<div class='col-12 col-insert-2 '>"+
+                        "<div class='col-12 col-insert-2 d-none'>"+
                             "<table class='table table-dark'>"+
                                 "<tbody>"+
                                     "<tr id='holes'>" +
@@ -169,16 +171,19 @@ $("#newCard").on("submit", async() => {
                 $("."+ insert_col +" table #handicaps").append("<td>"+ totals["handicap"] +"</td>");
                 $("." + insert_col + " table #"+ username +"Score").append("<td id='" + username + "_total_2'></td>");
         
+            }).catch((err) => {
+                alertMesssage('', err, "danger");
             });
         
             $("#courses").prop('selectedIndex', 0);
-            $("#player").val("");
             $("#level").prop('selectedIndex', 0);
         
             $("#level_row").addClass("d-none");
             $("#level").empty().append('<option value="">Select Level</option>');
             break;
     }
+
+    $("#player").val("");
 
 });
 
@@ -217,14 +222,15 @@ function calculateScore() {
 
     if (score_data[2] == 9) {
         $("table").find(".col-insert-2").removeClass("d-none");
-        $("#col_insert_2").text($("table").find(table_total).text());
+        $("#" + score_data[0] + "_total_2").text($("table").find(table_total).text());
     } else if (score_data[2] == 18) {
         alertMesssage('', `${score_data[0]} you are (L)PGA Tour material!`, 'success');
     } else {
         $(current_table).find("#"+ score_data[0] +"_score_" + (parseInt(score_data[2]) + 1)).prop("disabled", false);
     }
 
-    $(event.currentTarget).prop("disabled", true);
+    // $(event.currentTarget).prop("disabled", true);
+    $(event.currentTarget).parents("td").html(event.currentTarget.value);
 }
 
 function checkUser(username = event.currentTarget.value) {
